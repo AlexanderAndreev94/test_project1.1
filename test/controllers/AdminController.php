@@ -30,7 +30,7 @@ class AdminController extends Controller
 
     public function actionIndex()
     {
-        return $this->render('index', ['id'=>1]);
+        return $this->render('editCategory', ['id'=>self::SHOW_CATEGORIES]);
     }
 
     public function actionShow($id)
@@ -40,7 +40,7 @@ class AdminController extends Controller
             $model = new Category();
             $cats = $model->find()->all();
 
-            return $this->render('index', ['id' => $id, 'categories' => $cats]);
+            return $this->render('editCategory', ['id' => $id, 'categories' => $cats]);
         }
         if($id == self::EDIT_POSTS)
         {
@@ -54,14 +54,14 @@ class AdminController extends Controller
                 $postsAndCategory[$i] = ['postTtl'=>$post->title, 'categoryTtl'=> $category['title'], 'postId'=>$post->id];
             }
 
-            return $this->render('index', ['id' => $id, 'posts' => $posts, 'postsByCat' => $postsAndCategory]);
+            return $this->render('editPost', ['id' => $id, 'posts' => $posts, 'postsByCat' => $postsAndCategory]);
         }
         if($id == self::EDIT_COMMENTS)
         {
             $pmodel = new Post();
             $posts = $pmodel->find()->all();
 
-            return $this->render('index', ['id' => $id, 'posts'=>$posts]);
+            return $this->render('editComment', ['id' => $id, 'posts'=>$posts]);
         }
     }
 
@@ -81,7 +81,7 @@ class AdminController extends Controller
 
             $post->load(Yii::$app->request->post());
             $post->save(false);
-            return $this->render('index', ['id' => self::EDIT_POSTS]);
+            return $this->render('editPost', ['id' => self::EDIT_POSTS]);
         }
         return new NotFoundHttpException();
     }
@@ -93,7 +93,7 @@ class AdminController extends Controller
         if($post)
         {
             $post->delete();
-            return $this->render('index', ['id' => 2]);
+            return $this->render('deletePost', ['id' => 2]);
         }
         return new NotFoundHttpException();
     }
@@ -107,7 +107,7 @@ class AdminController extends Controller
             $model->load(Yii::$app->request->post());
             $model->save(false);
         }
-        return $this->render('index', ['id' => self::EDIT_POSTS]);
+        return $this->render('editPost', ['id' => self::EDIT_POSTS]);
     }
 
     public function actionEditcomment()
@@ -119,7 +119,7 @@ class AdminController extends Controller
             {
                 $comment->load(Yii::$app->request->post());
                 $comment->save();
-                return $this->render('index', ['id'=>3]);
+                return $this->render('editComment', ['id'=>3]);
             }
         }
         return new NotFoundHttpException();
@@ -131,7 +131,7 @@ class AdminController extends Controller
         if($comment)
         {
             $comment->delete();
-            return $this->render('index', ['id'=>self::EDIT_COMMENTS]);
+            return $this->render('editComment', ['id'=>self::EDIT_COMMENTS]);
         }
         return new NotFoundHttpException();
     }
@@ -172,9 +172,9 @@ class AdminController extends Controller
                 }
             }
             $model->save();
-            return $this->render('index', ['id' => 1, 'catTree' => $catTree, 'err' => '']);
+            return $this->render('editCategory', ['id' => 1, 'catTree' => $catTree, 'err' => '']);
         }
-        return $this->render('index', ['id'=>1, 'err' => 'Category already exists']);
+        return $this->render('editCategory', ['id'=>1, 'err' => 'Category already exists']);
     }
 
     public function actionUpdateCategory()
@@ -185,7 +185,7 @@ class AdminController extends Controller
         {
             $cat->load(Yii::$app->request->post());
             $cat->save(false);
-            return $this->render('index', ['id'=>self::SHOW_CATEGORIES]);
+            return $this->render('editCategory', ['id'=>self::SHOW_CATEGORIES]);
         }
         return new NotFoundHttpException();
     }
@@ -197,7 +197,7 @@ class AdminController extends Controller
         if($cat)
         {
             $cat->delete();
-            return $this->render('index', ['id'=>self::SHOW_CATEGORIES]);
+            return $this->render('editCategory', ['id'=>self::SHOW_CATEGORIES]);
         }
         return new NotFoundHttpException();
     }
