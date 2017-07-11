@@ -2,6 +2,7 @@
 namespace app\models;
 
 use yii\base\Model;
+use yii\db\Query;
 use yii\web\UploadedFile;
 
 class UploadForm extends Model

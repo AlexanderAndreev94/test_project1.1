@@ -35,7 +35,6 @@ class Comment extends \yii\db\ActiveRecord
         return [
             [['post_id', 'user_id'], 'integer'],
             [['content'], 'string'],
-            [['username'], 'string'],
             [['date_created'], 'safe'],
             [['status'], 'string', 'max' => 10],
             [['post_id'], 'exist', 'skipOnError' => true, 'targetClass' => Post::className(), 'targetAttribute' => ['post_id' => 'id']],

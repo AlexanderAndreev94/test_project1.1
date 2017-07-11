@@ -26,7 +26,7 @@ use \yii\helpers\Html;
 JS;
                 $this->registerJs($js);
             ?>
-            <a id="single_image" href="<?= 'uploads/'.$image->image; ?>"><img src="<?= 'uploads/'.$image->image; ?>" alt=""/></a>
+            <a id="single_image" href="<?= isset($image) ? ('uploads/'.$image->image) : ('Image not found') ?>"><img src="<?= isset($image) ? ('uploads/'.$image->image) : ('Image not found') ?>" alt=""/></a>
         </div>
         <div class="articleContent">
             <p>
@@ -50,24 +50,14 @@ JS;
                                 if($user->id == $comment->user_id)
                                 {
                                     echo '
-                                        <div class="commentBody" style="border: none;
-                                                                        border-radius: 5px;
-                                                                        background: lightgreen;
-                                                                        color: white;
-                                                                        text-align:left;
-                                                                        box-sizing: border-box;
-                                                                        padding-left: 10px;
-                                                                        height:40px;
-                                                                        margin-bottom: 5px;">
+                                        <div class="commentBody" >
                                             <div class="user">'.$user->username.' said:'.'</div>
                                             <div class="comment">'.$comment->content.'</div>
                                         </div>
                                     ';
                                     break;
                                 }
-
                             }
-
                         }
                     }
                 }
@@ -80,9 +70,6 @@ JS;
 
                     if(Yii::$app->user->id != 0)
                     {
-
-
-
                         $model = new \app\models\Comment();
 
                         $action = 'main/show&id='.$post_id;

@@ -8,7 +8,6 @@
 
 namespace app\controllers;
 
-
 use app\models\Category;
 use app\models\Comment;
 use app\models\LoginForm;
@@ -18,7 +17,7 @@ use app\models\UserIdentity;
 use yii\web\Controller;
 use yii\helpers\Json;
 use yii;
-
+use yii\web\NotFoundHttpException;
 
 class MainController extends  Controller
 {
@@ -53,8 +52,6 @@ class MainController extends  Controller
                     }
                     return true;
                 }
-                /*
-                */
 
                 return $this->render('about');
             }
@@ -73,8 +70,6 @@ class MainController extends  Controller
                 return true;
             }
         }
-
-
         return false;
     }
 
@@ -90,6 +85,11 @@ class MainController extends  Controller
         return $this->render('about');
     }
 
+    /**
+     * @param $catId
+     * @param $offsetId
+     * @return string
+     */
     public function actionHome($catId, $offsetId)
     {
         if($catId === null)
@@ -107,7 +107,7 @@ class MainController extends  Controller
         {
             $offsetId++;
         }
-        $articles = $postModel->find()->where('category_id=:id', [':id'=>$catId])->andWhere(['like', 'status', 'active'])->andWhere('pub_date<:date', [':date'=>date("Y-m-d H:i:s")])->orWhere('pub_date=:date', [':date'=>date("Y-m-d H:i:s")])->limit(10)->offset($offsetId)->orderBy(['pub_date' => SORT_DESC])->all();
+        $articles = $postModel->find()->where('category_id=:id', [':id'=>$catId])->andWhere('status=1')->andWhere('pub_date<=:date', [':date'=>date("Y-m-d H:i:s")])->limit(10)->offset($offsetId)->orderBy(['pub_date' => SORT_DESC])->all();
 
         $categories = Category::find()->where(['like', 'status', 'active'])->all();
 
@@ -148,7 +148,7 @@ class MainController extends  Controller
         $img = new Postimage();
         $image = $img->find()->where('post_id=:id', [':id'=>$id])->one();
 
-        if($article && $image)
+        if($article)
         {
 
             $commentsObj = $comments->find()->where('post_id=:id', [':id'=>$id])->all();
@@ -160,12 +160,16 @@ class MainController extends  Controller
             $usersObj = $users->find()->where(['id'=>$toCommentsQry])->all();
 
             $userId = Yii::$app->user->id;
-            return $this->render('article', ['article'=>$article,'post_id'=>$id, 'image' => $image, 'comments' => $commentsObj, 'user_id' => $userId, 'users'=>$usersObj]);
-         //   return $this->render('article', ['article'=>$article,'post_id'=>$id, 'users'=>$allUsers, 'image' => $image, 'comments' => $comments_ar, 'user_id' => $user_id]);
+
+            if($image)
+            {
+               return $this->render('article', ['article'=>$article,'post_id'=>$id, 'image' => $image, 'comments' => $commentsObj, 'user_id' => $userId, 'users'=>$usersObj]);
+            }
+            else
+            {
+                return $this->render('article', ['article'=>$article,'post_id'=>$id, 'image' => null, 'comments' => $commentsObj, 'user_id' => $userId, 'users'=>$usersObj]);
+            }
         }
-        return false;
-
+        return new NotFoundHttpException();
     }
-
-
 }
